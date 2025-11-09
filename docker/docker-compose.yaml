@@ -57,3 +57,23 @@ services:
       ME_CONFIG_BASICAUTH_ENABLED: true
       ME_CONFIG_BASICAUTH_USERNAME: root
       ME_CONFIG_BASICAUTH_PASSWORD: root
+
+  frontend:
+    build: ./web-application
+    container_name: multi-agent-planner-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=dev
+    depends_on:
+      - backend
+
+  backend:
+    build: ./agents
+    container_name: multi-agent-planner-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - mongo
