@@ -59,21 +59,23 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: root
 
   frontend:
-    build: ./web-application
+    build: ../web-application
     container_name: multi-agent-planner-frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=dev
+      - MONGODB_URI=mongodb://root:example@mongo:27017/
     depends_on:
       - backend
 
   backend:
-    build: ./agents
+    build: ../agents
     container_name: multi-agent-planner-backend
     ports:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      - MONGODB_URI=mongodb://root:example@mongo:27017/
     depends_on:
       - mongo

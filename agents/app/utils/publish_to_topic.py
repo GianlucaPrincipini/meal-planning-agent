@@ -1,4 +1,6 @@
-from confluent_kafka import Producer
+import os
+
+from kafka import KafkaProducer
 import json
 from pathlib import Path
 
@@ -6,6 +8,8 @@ from pathlib import Path
 root_dir = Path(__file__).resolve().parent.parent
 
 properties_file = root_dir / "client.properties"
+
+BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9094")
 
 def read_config():
   # reads the client configuration from client.properties
@@ -21,10 +25,11 @@ def read_config():
 
 def produce(topic, data):
   # creates a new producer instance
-  producer = Producer(read_config())
+  producer = KafkaProducer(bootstrap_servers=BOOTSTRAP,
+                           value_serializer=lambda v: json.dumps(v).encode("utf-8"))
 
   # produces a sample message
-  producer.produce(topic, value=json.dumps(data))
+  producer.send(topic, data)
 
   # send any outstanding or buffered messages to the Kafka broker
   producer.flush()
